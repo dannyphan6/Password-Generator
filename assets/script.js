@@ -10,16 +10,9 @@ var upperCase = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M"
 var numericNumbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 var specialCharacters = ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "_", "-", "+", "=", "{", "}", "[", "]", ";", ":", "'", "`", "~", "<", ",", ">", ".", "?", "/", "|"];
 
-// This allows you to pull in the variable anywhere in the code
-var passwordLength;
-var verifyUppercase;
-var verifyLowercase;
-var verifySpecial;
-var verifyNumbers;
-
 // Function that executes these prompts, alerts, and confirms
 function getLength() {
-  passwordLength = window.prompt("Choose a length for your password. Password length should be between 8-128 characters");
+  var passwordLength = window.prompt("Choose a length for your password. Password length should be between 8-128 characters");
 
   if(passwordLength < 8) {
     window.alert("Password length must be a number between 8-128 characters");
@@ -31,15 +24,21 @@ function getLength() {
     window.alert("Password length must be a number between 8-128 characters");
     return;
   } 
-  verifyUppercase = confirm("Click 'Ok' to include uppercase letters in your password")
-  verifyLowercase = confirm("Click 'Ok' to include lowercase letters in your password")
-  verifySpecial = confirm("Click 'Ok' to include special letters in your password")
-  verifyNumbers = confirm("Click 'Ok' to include numbers in your password")
+  var verifyUppercase = confirm("Click 'Ok' to include uppercase letters in your password")
+  var verifyLowercase = confirm("Click 'Ok' to include lowercase letters in your password")
+  var verifySpecial = confirm("Click 'Ok' to include special characters in your password")
+  var verifyNumbers = confirm("Click 'Ok' to include numbers in your password")
+
+  if(verifyUppercase === false && verifyLowercase === false && verifySpecial === false && verifyNumbers === false) {
+    window.alert("Password must include at least 1 character type")
+    return;
+  }
 
 // This creates an object where data is stored from the user 
 // The variable passwordChoice stores all of the data from passwordLength, verifyUppercase, and etc
 // On the right, is where all the data is stored
 // On the left, are names that we assign to the data that is stored
+// Key value pair (Look this up later)
   var passwordChoice = {
     passwordLength: passwordLength,
     verifyLowercase: verifyLowercase,
@@ -54,35 +53,67 @@ return passwordChoice;
 
 
 // Write password to the #password input (Work on this function to add if else statements)
+// userOptions = passwordChoice because passwordChoice returns the user input data that's stored
+// Since userOptions = getLength, then this is saying that whatever getLength returns, is equal to userOptions
+// In this case, an object is equal to userOptions because passwordChoice is an object
+
 function generatePassword() {
 
-  
   var userOptions = getLength(); 
   console.log(userOptions.passwordLength);
   console.log(userOptions.verifyLowercase);
   console.log(userOptions.verifyUppercase);
   console.log(userOptions.verifyNumbers);
   console.log(userOptions.verifySpecial);
+
+// Creates a variable with an empty array, that will be filled with the 4 arrays above by using .push
+  var generateRandom = [];
+  var guaranteedChar = [];
+  var finalPassword = [];
   
-  if(verifyLowercase) {
-    lowerCase.push()
+  if(userOptions.verifyLowercase) {
+    guaranteedChar.push(Random(lowerCase));
+    generateRandom.push(...lowerCase);
   }
-  if(verifyUppercase) {
-    generateRandom += upperCase;
+  if(userOptions.verifyUppercase) {
+    guaranteedChar.push(Random(upperCase));
+    generateRandom.push(...upperCase);
   }
-  if(verifyNumbers) {
-    generateRandom += numericNumbers;
+  if(userOptions.verifyNumbers) {
+    guaranteedChar.push(Random(numericNumbers));
+    generateRandom.push(...numericNumbers);
   }
-  if(verifySpecial) {
-    generateRandom += specialCharacters;
+  if(userOptions.verifySpecial) {
+    guaranteedChar.push(Random(specialCharacters));
+    generateRandom.push(...specialCharacters);
   }
   
-  
-  
+  for(var i=0; i < userOptions.passwordLength; i++) {
+    var generateChar = Random(generateRandom)
+    // generateChar is executing the function Random, which pulls a random index number from the array generateRandom, which has all of the values that was pushed
+    finalPassword.push(generateChar)
+    // finalPassword is a variable that 
+    console.log(generateChar);
+  }
+
+  for(var i=0; i < guaranteedChar.length; i++) {
+    finalPassword[i] = guaranteedChar[i]
+    // This is saying the first 4 index's in finalPassword is being replaced with the 4 random index's that was chosen from guaranteedChar 
+  } 
+return finalPassword.join("");
+// Takes finalPassword array and converts it to a string
+
 }
-// Math.floor function
-for(var i=0; i < getLength; i++) {
- 
+
+// characterArray is a placeholder for now
+// arrayIndex calls for a random index number
+// randomEl says give me the letter in the array characterArray of the random index number that's generated from arrayIndex EX: index[10] would result in the letter g
+function Random(randomArray) {
+  var randomIndex = Math.floor(Math.random() * randomArray.length)
+  var randomElement = randomArray[randomIndex]; 
+  console.log(randomIndex);
+  console.log(randomElement);
+  return randomElement;
 }
 
 function writePassword() {
@@ -97,13 +128,6 @@ function writePassword() {
 // Add event listener to generate button
 generateBtn.addEventListener("click", writePassword);
 
-
-
-
-
-
-
-
 /*
 
 When I click on a button to generate a password, then I am presented with multiple series of prompts 
@@ -111,10 +135,6 @@ When prompted for length of password, then choose a length of password that's be
 When prompted for character types, choose lowercase, uppercase, numbers, and/or special characters 
 When each prompt is answered, then inputs should be valid or it should prompt the user to choose again
 This will be a loop to determine whether input isn't valid 
-
-
-
-
 
 GIVEN I need a new, secure password
 WHEN I click the button to generate a password
